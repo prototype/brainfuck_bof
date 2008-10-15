@@ -3,7 +3,7 @@ require 'lexer'
 require 'parser'
 
 module Brainfuck
-class RubyCodeEmit
+class RubyCodeGenerator
 	def initialize(file_path)
 		@file_path = file_path
 		@lexer  = Lexer.new(file_path)
@@ -64,5 +64,5 @@ end
 end
 
 file_path = ARGV[0]
-generator = Brainfuck::RubyCodeEmit.new(file_path)
+generator = Brainfuck::RubyCodeGenerator.new(file_path)
 generator.emit
