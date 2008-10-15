@@ -3,16 +3,16 @@ require 'lexer'
 require 'parser'
 
 module Brainfuck
-class Interpreter
+class RubyCodeEmit
 	def initialize(file_path)
 		@file_path = file_path
 		@lexer  = Lexer.new(file_path)
 		@parser = Parser.new(@lexer)
-		@addresses = [0] * 3000
-		@ptr = 0
 	end
 	
-	def interpret
+	def emit
+		puts "addresses = [0] * 3000"
+		puts "ptr = 0"
 		@parser.parse
 		children = @parser.ast.children
 		children.each { |child| child.accept(self) }
@@ -20,49 +20,49 @@ class Interpreter
 	
 	def visit_incr_ptr(ast)
 		#puts 'debug: >'
-		@ptr += 1
+		puts "ptr += 1"
 	end
 	
 	def visit_decr_ptr(ast)
 		#puts 'debug: <'
-		@ptr -= 1
+		puts "ptr -= 1"
 	end
 	
 	def visit_incr_ptd_byte(ast)
 		#puts 'debug: +'
-		@addresses[@ptr] += 1
+		puts "addresses[ptr] += 1"
 	end
 	
 	def visit_decr_ptd_byte(ast)
 		#puts 'debug: -'
-		@addresses[@ptr] -= 1
+		puts "addresses[ptr] -= 1"
 	end
 	
 	def visit_output_ptd_byte(ast)
 		#puts 'debug: .'
-		print @addresses[@ptr].chr
+		puts "print addresses[ptr].chr"
 	end
 	
 	def visit_input_ptd_byte(ast)
 		#puts 'debug: ,'
-		@addresses[@ptr] = $stdin.getc
+		puts "addresses[ptr] = $stdin.getc"
 	end
 	
 	def visit_eof(ast)
-		puts
+		puts "puts"
 	end
 	
 	def visit_while(ast)
 		#print '['
-		while(@addresses[@ptr] != 0)
+		puts "while(addresses[ptr] != 0)"
 			children = ast.children
 			children.each { |child| child.accept(self) }
-		end
+		puts "end"
 		#print ']'
 	end
 end
 end
 
 file_path = ARGV[0]
-interpreter = Brainfuck::Interpreter.new(file_path)
-interpreter.interpret
+generator = Brainfuck::RubyCodeEmit.new(file_path)
+generator.emit
